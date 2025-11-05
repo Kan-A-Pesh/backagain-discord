@@ -38,7 +38,7 @@ cd "$SCRIPT_DIR"
 
 # Start the bot with tsx for path alias support
 echo -e "${YELLOW}🤖 Starting Discord bot...${NC}"
-if tsx --tsconfig tsconfig.json src/index.ts; then
+if npx tsx --tsconfig tsconfig.json src/index.ts; then
     echo -e "${GREEN}✅ Bot stopped gracefully${NC}"
 else
     echo -e "${RED}❌ Bot exited with error${NC}"
