@@ -80,6 +80,9 @@ RUN chmod +x ./apps/bot/start.sh
 # The database package is consumed as TypeScript source by the compiled bot code
 COPY --from=build /app/packages/database ./packages/database
 
+# Copy typescript-config package (needed for tsconfig.json extends)
+COPY --from=build /app/packages/typescript-config ./packages/typescript-config
+
 # Note: Environment variables are provided by docker-compose via env_file
 # The dotenv.config() calls in code will not find ../../.env, but docker-compose
 # injects environment variables directly, making the .env file unnecessary
