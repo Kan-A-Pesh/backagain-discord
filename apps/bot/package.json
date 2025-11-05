@@ -1,0 +1,29 @@
+{
+  "name": "bot",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "tsx src/index.ts --watch",
+    "build": "tspc",
+    "start": "node dist/src/index.js",
+    "types:check": "tspc --noEmit"
+  },
+  "dependencies": {
+    "@openrouter/ai-sdk-provider": "^1.2.0",
+    "@repo/database": "workspace:*",
+    "ai": "^5.0.87",
+    "cron": "^4.3.3",
+    "discord.js-selfbot-v13": "^3.6.1",
+    "dotenv": "^17.2.3",
+    "drizzle-orm": "^0.44.7",
+    "zod": "^4.1.12"
+  },
+  "devDependencies": {
+    "@repo/typescript-config": "workspace:*",
+    "@types/node": "^22.15.3",
+    "ts-patch": "^3.3.0",
+    "tsx": "^4.20.3",
+    "typescript": "5.9.2",
+    "typescript-transform-paths": "^3.5.3"
+  }
+}
