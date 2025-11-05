@@ -12,8 +12,8 @@ const geistMono = localFont({
 });
 
 export const metadata: Metadata = {
-  title: "Next.js turborepo template",
-  description: "A template for a Next.js project with Better Auth and Drizzle",
+  title: "Discord Status Queue",
+  description: "View and track Discord status update requests in real-time",
 };
 
 export default function RootLayout({
