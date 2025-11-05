@@ -1,0 +1,17 @@
+services:
+  bot:
+    build:
+      context: .
+      dockerfile: apps/bot/Dockerfile
+
+    environment:
+      - TOKEN=${TOKEN}
+      - DATABASE_URL=${DATABASE_URL}
+      - OPENROUTER_API_KEY=${OPENROUTER_API_KEY}
+      - UPDATE_WEBHOOK_URL=${UPDATE_WEBHOOK_URL:-}
+      - NODE_ENV=${NODE_ENV:-production}
+
+    env_file:
+      - .env
+
+    restart: unless-stopped
