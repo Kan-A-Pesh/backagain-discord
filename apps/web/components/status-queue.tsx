@@ -58,7 +58,7 @@ export function StatusQueue({
       <div
         className={cn(
           "flex flex-col gap-3 rounded-lg border bg-background p-6 shadow-xs dark:border-input dark:bg-input/30",
-          className
+          className,
         )}
       >
         <div className="flex items-center justify-center py-12">
@@ -77,7 +77,7 @@ export function StatusQueue({
       <div
         className={cn(
           "flex flex-col gap-3 rounded-lg border bg-background p-6 shadow-xs dark:border-input dark:bg-input/30",
-          className
+          className,
         )}
       >
         <div className="flex items-center justify-center py-12">
@@ -103,7 +103,7 @@ export function StatusQueue({
                 No statuses yet
               </p>
               <p className="text-xs text-muted-foreground">
-                Status updates will appear here when they're requested
+                Status updates will appear here when they&apos;re requested
               </p>
             </div>
           </div>

@@ -7,7 +7,8 @@ Channel ID: ${message.channel.id}
 Created At: ${message.createdAt.toISOString()}
 Reactions: ${message.reactions.cache
     .map(
-      (r) => `${r.emoji.name} (${r.count}${r.users.cache.has(message.client.user?.id || "") ? ", including YOU" : ""})`
+      (r) =>
+        `${r.emoji.name} (${r.count}${r.users.cache.has(message.client.user?.id || "") ? ", including YOU" : ""})`,
     )
     .join(", ")}
 

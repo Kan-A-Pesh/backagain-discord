@@ -35,14 +35,15 @@ export class DiscordTools {
   }
 
   skipTool = tool({
-    description: "Skip responding to the current message - use when not interested or not relevant",
+    description:
+      "Skip responding to the current message - use when not interested or not relevant",
     inputSchema: z.object({
-      reason: z.string().optional().describe("Optional reason for skipping")
+      reason: z.string().optional().describe("Optional reason for skipping"),
     }),
     execute: async ({ reason }) => {
       console.log("Skipping interaction", { reason });
       return { success: true };
-    }
+    },
   });
 
   replyToTool = tool({
@@ -50,30 +51,38 @@ export class DiscordTools {
     inputSchema: z.object({
       content: z.string().describe("The reply content"),
       messageId: z.string().describe("The message ID to reply to"),
-      channelId: z.string().describe("The channel ID where the message is located")
+      channelId: z
+        .string()
+        .describe("The channel ID where the message is located"),
     }),
     execute: async ({ content, messageId, channelId }) => {
       console.log("Reply requested", {
         messageId,
         channelId,
-        contentLength: content.length
+        contentLength: content.length,
       });
 
-      const { data: channel, error } = await tryCatch(() => client.channels.cache.get(channelId));
+      const { data: channel, error } = await tryCatch(() =>
+        client.channels.cache.get(channelId),
+      );
 
       if (error || !channel || !channel.isText()) {
         console.error("Channel not found or not text-based", { channelId });
         return { success: false, error: "Channel not found or not text-based" };
       }
 
-      const { data: message, error: messageError } = await tryCatch(() => channel.messages.fetch(messageId));
+      const { data: message, error: messageError } = await tryCatch(() =>
+        channel.messages.fetch(messageId),
+      );
 
       if (messageError || !message) {
         console.error("Message not found", { messageId });
         return { success: false, error: "Message not found" };
       }
 
-      const { data: reply, error: replyError } = await tryCatch(() => message.reply(this.prepareMessage(content)));
+      const { data: reply, error: replyError } = await tryCatch(() =>
+        message.reply(this.prepareMessage(content)),
+      );
 
       if (replyError) {
         console.error("Error replying to message", { replyError });
@@ -81,17 +90,17 @@ export class DiscordTools {
       }
 
       return { success: true, replyId: reply.id };
-    }
+    },
   });
 
   sendMessageTool = tool({
     description: "Send a new message to the current channel",
     inputSchema: z.object({
-      content: z.string().describe("The message content to send")
+      content: z.string().describe("The message content to send"),
     }),
     execute: async ({ content }) => {
       console.log("Message send requested", {
-        contentLength: content.length
+        contentLength: content.length,
       });
 
       const targetChannelId = this.context.channel?.id;
@@ -101,17 +110,21 @@ export class DiscordTools {
         return { success: false, error: "Channel ID is required" };
       }
 
-      const { data: channel, error } = await tryCatch(() => client.channels.cache.get(targetChannelId));
+      const { data: channel, error } = await tryCatch(() =>
+        client.channels.cache.get(targetChannelId),
+      );
 
       if (error || !channel || !channel.isText()) {
         console.error("Channel not found or not sendable", { targetChannelId });
         return { success: false, error: "Channel not found or not sendable" };
       }
 
-      const { data: sentMessage, error: sentMessageError } = await tryCatch(async () => {
-        const message = await channel.send(this.prepareMessage(content));
-        return message;
-      });
+      const { data: sentMessage, error: sentMessageError } = await tryCatch(
+        async () => {
+          const message = await channel.send(this.prepareMessage(content));
+          return message;
+        },
+      );
 
       if (sentMessageError) {
         console.error("Error sending message", { sentMessageError });
@@ -119,37 +132,47 @@ export class DiscordTools {
       }
 
       return { success: true, messageId: sentMessage.id };
-    }
+    },
   });
 
   addReactionTool = tool({
     description: "Add an emoji reaction to a message",
     inputSchema: z.object({
       messageId: z.string().describe("The message ID to react to"),
-      channelId: z.string().describe("The channel ID where the message is located"),
-      emoji: z.string().describe("The emoji to add (e.g., '👍', '❤️', or custom emoji name)")
+      channelId: z
+        .string()
+        .describe("The channel ID where the message is located"),
+      emoji: z
+        .string()
+        .describe("The emoji to add (e.g., '👍', '❤️', or custom emoji name)"),
     }),
     execute: async ({ messageId, channelId, emoji }) => {
       console.log("Reaction requested", { messageId, channelId, emoji });
 
-      const { data: channel, error } = await tryCatch(() => client.channels.cache.get(channelId));
+      const { data: channel, error } = await tryCatch(() =>
+        client.channels.cache.get(channelId),
+      );
 
       if (error || !channel || !channel.isText()) {
         console.error("Channel not found or not text-based", { channelId });
         return { success: false, error: "Channel not found or not text-based" };
       }
 
-      const { data: message, error: messageError } = await tryCatch(() => channel.messages.fetch(messageId));
+      const { data: message, error: messageError } = await tryCatch(() =>
+        channel.messages.fetch(messageId),
+      );
 
       if (messageError || !message) {
         console.error("Message not found", { messageId });
         return { success: false, error: "Message not found" };
       }
 
-      const { data: reaction, error: reactionError } = await tryCatch(async () => {
-        const reaction = await message.react(this.prepareMessage(emoji));
-        return reaction;
-      });
+      const { data: reaction, error: reactionError } = await tryCatch(
+        async () => {
+          const reaction = await message.react(this.prepareMessage(emoji));
+          return reaction;
+        },
+      );
 
       if (reactionError) {
         console.error("Error adding reaction", { reactionError });
@@ -157,48 +180,57 @@ export class DiscordTools {
       }
 
       return { success: true, newCount: reaction.count };
-    }
+    },
   });
 
   removeReactionTool = tool({
     description: "Remove your reaction from a message",
     inputSchema: z.object({
       messageId: z.string().describe("The message ID to remove reaction from"),
-      channelId: z.string().describe("The channel ID where the message is located"),
-      emoji: z.string().describe("The emoji to remove")
+      channelId: z
+        .string()
+        .describe("The channel ID where the message is located"),
+      emoji: z.string().describe("The emoji to remove"),
     }),
     execute: async ({ messageId, channelId, emoji }) => {
       console.log("Reaction removal requested", {
         messageId,
         channelId,
-        emoji
+        emoji,
       });
 
-      const { data: channel, error } = await tryCatch(() => client.channels.cache.get(channelId));
+      const { data: channel, error } = await tryCatch(() =>
+        client.channels.cache.get(channelId),
+      );
 
       if (error || !channel || !channel.isText()) {
         console.error("Channel not found or not text-based", { channelId });
         return { success: false, error: "Channel not found or not text-based" };
       }
 
-      const { data: message, error: messageError } = await tryCatch(() => channel.messages.fetch(messageId));
+      const { data: message, error: messageError } = await tryCatch(() =>
+        channel.messages.fetch(messageId),
+      );
 
       if (messageError || !message) {
         console.error("Message not found", { messageId });
         return { success: false, error: "Message not found" };
       }
 
-      const { data: reaction, error: reactionError } = await tryCatch(() => message.reactions.cache.get(emoji));
+      const { data: reaction, error: reactionError } = await tryCatch(() =>
+        message.reactions.cache.get(emoji),
+      );
 
       if (reactionError || !reaction) {
         console.error("Reaction not found", { emoji });
         return { success: false, error: "Reaction not found" };
       }
 
-      const { data: removedReaction, error: removedReactionError } = await tryCatch(async () => {
-        const removedReaction = await reaction.users.remove(client.user?.id);
-        return removedReaction;
-      });
+      const { data: removedReaction, error: removedReactionError } =
+        await tryCatch(async () => {
+          const removedReaction = await reaction.users.remove(client.user?.id);
+          return removedReaction;
+        });
 
       if (removedReactionError) {
         console.error("Error removing reaction", { removedReactionError });
@@ -206,18 +238,24 @@ export class DiscordTools {
       }
 
       return { success: true, newCount: removedReaction.count };
-    }
+    },
   });
 
   joinVoiceChannelTool = tool({
     description: "Join a voice channel",
     inputSchema: z.object({
-      channelId: z.string().describe("The voice channel ID to join (get it from list_all_channels tool)")
+      channelId: z
+        .string()
+        .describe(
+          "The voice channel ID to join (get it from list_all_channels tool)",
+        ),
     }),
     execute: async ({ channelId }) => {
       console.log("Voice channel join requested", { channelId });
 
-      const { data: channel, error } = await tryCatch(() => client.channels.cache.get(channelId));
+      const { data: channel, error } = await tryCatch(() =>
+        client.channels.cache.get(channelId),
+      );
 
       if (error || !channel || !channel.isVoice()) {
         console.error("Voice channel not found", { channelId });
@@ -229,15 +267,15 @@ export class DiscordTools {
       console.log("Voice channel join not implemented yet", { channelId });
       return {
         success: false,
-        error: "Voice channel functionality not implemented yet"
+        error: "Voice channel functionality not implemented yet",
       };
-    }
+    },
   });
 
   leaveVoiceChannelTool = tool({
     description: "Leave the current voice channel",
     inputSchema: z.object({
-      reason: z.string().optional().describe("Optional reason for leaving")
+      reason: z.string().optional().describe("Optional reason for leaving"),
     }),
     execute: async ({ reason }) => {
       console.log("Voice channel leave requested", { reason });
@@ -247,9 +285,9 @@ export class DiscordTools {
       console.log("Voice channel leave not implemented yet", { reason });
       return {
         success: false,
-        error: "Voice channel functionality not implemented yet"
+        error: "Voice channel functionality not implemented yet",
       };
-    }
+    },
   });
 
   // Method to get all tools as an object
@@ -261,7 +299,7 @@ export class DiscordTools {
       add_reaction: this.addReactionTool,
       remove_reaction: this.removeReactionTool,
       join_voice_channel: this.joinVoiceChannelTool,
-      leave_voice_channel: this.leaveVoiceChannelTool
+      leave_voice_channel: this.leaveVoiceChannelTool,
     };
   }
 }

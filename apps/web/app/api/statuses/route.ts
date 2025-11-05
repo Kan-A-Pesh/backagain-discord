@@ -14,7 +14,7 @@ export async function GET() {
     console.error("Error fetching statuses:", error);
     return NextResponse.json(
       { error: "Failed to fetch statuses" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

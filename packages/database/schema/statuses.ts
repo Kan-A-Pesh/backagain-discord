@@ -12,5 +12,8 @@ export const statuses = pgTable("statuses", {
   requester: jsonb("requester").$type<Requester>().notNull(),
 
   createdAt: timestamp("created_at").notNull().defaultNow(),
-  updatedAt: timestamp("updated_at").notNull().defaultNow().$onUpdateFn(() => new Date()),
+  updatedAt: timestamp("updated_at")
+    .notNull()
+    .defaultNow()
+    .$onUpdateFn(() => new Date()),
 });

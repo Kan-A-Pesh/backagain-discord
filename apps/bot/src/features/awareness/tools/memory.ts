@@ -9,7 +9,10 @@ export const addMemoryTool = tool({
   inputSchema: z.object({
     userId: z.string().describe("The Discord user ID"),
     memory: z.string().describe("The memory to store"),
-    tags: z.array(z.string()).optional().describe("Optional tags for categorization")
+    tags: z
+      .array(z.string())
+      .optional()
+      .describe("Optional tags for categorization"),
   }),
   execute: async ({ userId, memory, tags }) => {
     try {
@@ -17,10 +20,13 @@ export const addMemoryTool = tool({
         userId,
         memory,
         tags: tags || [],
-        timestamp: new Date()
+        timestamp: new Date(),
       };
 
-      const [inserted] = await db.insert(memories).values(newMemory).returning();
+      const [inserted] = await db
+        .insert(memories)
+        .values(newMemory)
+        .returning();
 
       console.log("Memory stored", { memoryId: inserted!.id, userId });
       return { success: true, memoryId: inserted!.id };
@@ -28,14 +34,17 @@ export const addMemoryTool = tool({
       console.error("Failed to store memory", { error, userId });
       return { success: false, error: "Failed to store memory" };
     }
-  }
+  },
 });
 
 export const searchMemoryTool = tool({
   description: "Search for memories about a specific user",
   inputSchema: z.object({
     userId: z.string().describe("The Discord user ID to search memories for"),
-    query: z.string().optional().describe("Optional search query to filter memories")
+    query: z
+      .string()
+      .optional()
+      .describe("Optional search query to filter memories"),
   }),
   execute: async ({ userId, query }) => {
     try {
@@ -48,10 +57,10 @@ export const searchMemoryTool = tool({
             query
               ? or(
                   ilike(memories.memory, `%${query}%`),
-                  sql`EXISTS (SELECT 1 FROM unnest(${memories.tags}) AS tag WHERE tag ILIKE ${"%" + query + "%"})`
+                  sql`EXISTS (SELECT 1 FROM unnest(${memories.tags}) AS tag WHERE tag ILIKE ${"%" + query + "%"})`,
                 )
-              : undefined
-          )
+              : undefined,
+          ),
         );
 
       console.log("Memory search", { userId, foundCount: userMemories.length });
@@ -60,7 +69,7 @@ export const searchMemoryTool = tool({
       console.error("Failed to search memories", { error, userId });
       return { memories: [] };
     }
-  }
+  },
 });
 
 export const updateMemoryTool = tool({
@@ -68,11 +77,15 @@ export const updateMemoryTool = tool({
   inputSchema: z.object({
     memoryId: z.string().describe("The memory ID to update"),
     memory: z.string().describe("The updated memory content"),
-    tags: z.array(z.string()).optional().describe("Updated tags")
+    tags: z.array(z.string()).optional().describe("Updated tags"),
   }),
   execute: async ({ memoryId, memory, tags }) => {
     try {
-      const [updated] = await db.update(memories).set({ memory, tags }).where(eq(memories.id, memoryId)).returning();
+      const [updated] = await db
+        .update(memories)
+        .set({ memory, tags })
+        .where(eq(memories.id, memoryId))
+        .returning();
 
       if (!updated) {
         return { success: false, error: "Memory not found" };
@@ -84,17 +97,20 @@ export const updateMemoryTool = tool({
       console.error("Failed to update memory", { error, memoryId });
       return { success: false, error: "Failed to update memory" };
     }
-  }
+  },
 });
 
 export const deleteMemoryTool = tool({
   description: "Delete a memory",
   inputSchema: z.object({
-    memoryId: z.string().describe("The memory ID to delete")
+    memoryId: z.string().describe("The memory ID to delete"),
   }),
   execute: async ({ memoryId }) => {
     try {
-      const [deleted] = await db.delete(memories).where(eq(memories.id, memoryId)).returning();
+      const [deleted] = await db
+        .delete(memories)
+        .where(eq(memories.id, memoryId))
+        .returning();
 
       const success = !!deleted;
       console.log("Memory deletion", { memoryId, success });
@@ -103,14 +119,17 @@ export const deleteMemoryTool = tool({
       console.error("Failed to delete memory", { error, memoryId });
       return { success: false };
     }
-  }
+  },
 });
 
 export const listMemoriesTool = tool({
   description: "List all memories for a user",
   inputSchema: z.object({
     userId: z.string().describe("The Discord user ID"),
-    limit: z.number().optional().describe("Limit the number of memories returned")
+    limit: z
+      .number()
+      .optional()
+      .describe("Limit the number of memories returned"),
   }),
   execute: async ({ userId, limit }) => {
     try {
@@ -127,5 +146,5 @@ export const listMemoriesTool = tool({
       console.error("Failed to list memories", { error, userId });
       return { memories: [] };
     }
-  }
+  },
 });

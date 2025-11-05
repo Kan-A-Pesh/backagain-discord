@@ -6,14 +6,15 @@ import { statuses } from "@repo/database";
 import { db } from "@repo/database";
 import { asc, desc, eq, sql } from "drizzle-orm";
 
-
 client.on("messageCreate", async (message) => {
   if (!message.cleanContent.startsWith("!bio")) return;
 
   const statusText = message.cleanContent.replace("!bio ", "").trim();
 
   if (statusText.length > 120) {
-    await message.reply("🤭 Oops... the status text must be less than 120 characters");
+    await message.reply(
+      "🤭 Oops... the status text must be less than 120 characters",
+    );
     return;
   }
 
@@ -35,11 +36,11 @@ client.on("messageCreate", async (message) => {
       await fetch(process.env.UPDATE_WEBHOOK_URL, {
         method: "POST",
         headers: {
-          "Content-Type": "application/json"
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          content: `New status submission: ${statusText}`
-        })
+          content: `New status submission: ${statusText}`,
+        }),
       });
     }
   } catch (error) {
@@ -48,18 +49,33 @@ client.on("messageCreate", async (message) => {
 
   await db.insert(statuses).values({
     status: statusText,
-    requester: { id: message.author.id, username: message.author.username, displayName: message.author.displayName }
+    requester: {
+      id: message.author.id,
+      username: message.author.username,
+      displayName: message.author.displayName,
+    },
   });
-  await message.reply("ok. your request has been noted.\ncheck https://discord.kan-a-pesh.fr to see your place in the queue.");
+  await message.reply(
+    "ok. your request has been noted.\ncheck https://discord.kan-a-pesh.fr to see your place in the queue.",
+  );
   await message.react("👍");
 });
 
 async function setCustomStatus() {
-  const nextStatus = await db.select().from(statuses).orderBy(asc(statuses.createdAt)).limit(1);
+  const nextStatus = await db
+    .select()
+    .from(statuses)
+    .orderBy(asc(statuses.createdAt))
+    .limit(1);
 
-  let statusText = nextStatus[0]?.status || "💡 DM me '!bio <text>' to change my status";
-  const emoji = statusText.trim().match(/(\u00a9|\u00ae|[\u2000-\u3300]|\ud83c[\ud000-\udfff]|\ud83d[\ud000-\udfff]|\ud83e[\ud000-\udfff])/g)?.[0];
-  const custom = new CustomStatus(client)
+  let statusText =
+    nextStatus[0]?.status || "💡 DM me '!bio <text>' to change my status";
+  const emoji = statusText
+    .trim()
+    .match(
+      /(\u00a9|\u00ae|[\u2000-\u3300]|\ud83c[\ud000-\udfff]|\ud83d[\ud000-\udfff]|\ud83e[\ud000-\udfff])/g,
+    )?.[0];
+  const custom = new CustomStatus(client);
 
   if (emoji) {
     statusText = statusText.replace(emoji, "").trim();
@@ -70,7 +86,7 @@ async function setCustomStatus() {
 
   client.user!.setPresence({
     status: "online",
-    activities: [custom]
+    activities: [custom],
   });
 
   if (nextStatus[0]?.id) {
@@ -85,7 +101,7 @@ CronJob.from({
   cronTime: isDev ? "*/1 * * * *" : "*/30 * * * *",
   // (DEV) every 1 minute
   // (PROD) every 30 minutes
-  onTick: setCustomStatus
+  onTick: setCustomStatus,
 });
 
 setCustomStatus();

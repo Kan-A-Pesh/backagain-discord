@@ -18,12 +18,12 @@ export const memories = pgTable(
     userId: text("user_id").notNull(),
     memory: text("memory").notNull(),
     tags: text("tags").array().notNull().default([]),
-    timestamp: timestamp("timestamp").notNull().defaultNow()
+    timestamp: timestamp("timestamp").notNull().defaultNow(),
   },
   (table) => ({
     userIdIdx: index("memories_user_id_idx").on(table.userId),
-    timestampIdx: index("memories_timestamp_idx").on(table.timestamp)
-  })
+    timestampIdx: index("memories_timestamp_idx").on(table.timestamp),
+  }),
 );
 
 export type Memory = typeof memories.$inferSelect;

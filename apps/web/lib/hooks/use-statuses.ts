@@ -42,7 +42,7 @@ export function useStatuses(): UseStatusesReturn {
       const data = await response.json();
 
       // Transform the dates from strings to Date objects
-      const transformedStatuses = data.statuses.map((status: any) => ({
+      const transformedStatuses = data.statuses.map((status: Status) => ({
         ...status,
         createdAt: new Date(status.createdAt),
         updatedAt: new Date(status.updatedAt),

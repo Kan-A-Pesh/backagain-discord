@@ -1,10 +1,23 @@
 // Import all tools first
-import { addMemoryTool, searchMemoryTool, updateMemoryTool, deleteMemoryTool, listMemoriesTool } from "./memory";
+import {
+  addMemoryTool,
+  searchMemoryTool,
+  updateMemoryTool,
+  deleteMemoryTool,
+  listMemoriesTool,
+} from "./memory";
 import { DiscordTools, DiscordContext } from "./discord";
 import { searchWebTool } from "./web-search";
 
 // Re-export individual memory and web tools
-export { addMemoryTool, searchMemoryTool, updateMemoryTool, deleteMemoryTool, listMemoriesTool, searchWebTool };
+export {
+  addMemoryTool,
+  searchMemoryTool,
+  updateMemoryTool,
+  deleteMemoryTool,
+  listMemoriesTool,
+  searchWebTool,
+};
 
 // Re-export Discord types
 export type { DiscordTools, DiscordContext };
@@ -32,6 +45,6 @@ export function createAnnaTools(discordContext: DiscordContext) {
     leave_voice_channel: tools.leave_voice_channel,
 
     // Information tools
-    search_web: searchWebTool
+    search_web: searchWebTool,
   };
 }

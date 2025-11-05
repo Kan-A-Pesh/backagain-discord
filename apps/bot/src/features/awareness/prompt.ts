@@ -50,11 +50,11 @@ METADONNEES :
 - Date du jour : ${new Date().toLocaleDateString("fr-FR", {
     day: "2-digit",
     month: "2-digit",
-    year: "numeric"
+    year: "numeric",
   })}
 - Heure du jour : ${new Date().toLocaleTimeString("fr-FR", {
     hour: "2-digit",
-    minute: "2-digit"
+    minute: "2-digit",
   })}
 - Utilisateurs : ${users.map((u) => `${u.username} (${u.displayName})`).join(", ")}
 `;

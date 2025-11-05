@@ -10,55 +10,59 @@ client.on("messageCreate", async (message) => {
 
   try {
     // Get the last 50 messages in the channel for context
-    const messages = await message.channel.messages.fetch({ limit: 50 }).then((msgs) =>
-      msgs.map(
-        (m) =>
-          ({
-            role: (m.author.id === client.user?.id ? "assistant" : "user") as "assistant" | "user",
-            id: m.id,
-            annotations: [
-              {
-                userId: m.author.username,
-                messageId: m.id,
-                channelId: m.channel.id,
-                contentLength: m.content.length,
-                timestamp: m.createdAt.toISOString()
-              }
-            ],
-            createdAt: m.createdAt,
-            content: `ID:${m.id} - Author:${m.author.username} - Content:${m.cleanContent}`
-          }) as const
-      )
-    );
+    const messages = await message.channel.messages
+      .fetch({ limit: 50 })
+      .then((msgs) =>
+        msgs.map(
+          (m) =>
+            ({
+              role: (m.author.id === client.user?.id ? "assistant" : "user") as
+                | "assistant"
+                | "user",
+              id: m.id,
+              annotations: [
+                {
+                  userId: m.author.username,
+                  messageId: m.id,
+                  channelId: m.channel.id,
+                  contentLength: m.content.length,
+                  timestamp: m.createdAt.toISOString(),
+                },
+              ],
+              createdAt: m.createdAt,
+              content: `ID:${m.id} - Author:${m.author.username} - Content:${m.cleanContent}`,
+            }) as const,
+        ),
+      );
 
     const users = [
       {
         id: message.author.id,
         username: message.author.username || "",
-        displayName: message.author.displayName || ""
+        displayName: message.author.displayName || "",
       },
       {
         id: message.client.user?.id || "",
         username: message.client.user?.username || "",
-        displayName: message.client.user?.displayName || ""
-      }
+        displayName: message.client.user?.displayName || "",
+      },
     ];
 
     const systemPrompt = getSystemPrompt({
-      users: users || []
+      users: users || [],
     });
 
     const payload = [
       {
         role: "system" as const,
-        content: systemPrompt
+        content: systemPrompt,
       },
-      ...messages.reverse()
+      ...messages.reverse(),
     ];
 
     console.debug({
       messages: payload.length,
-      users: users?.length
+      users: users?.length,
     });
 
     // Create tools with context
@@ -66,7 +70,7 @@ client.on("messageCreate", async (message) => {
       message: message,
       channel: message.channel,
       userId: message.author.id,
-      users: users || []
+      users: users || [],
     });
 
     const { text, toolResults, steps } = await generateText({
@@ -75,17 +79,19 @@ client.on("messageCreate", async (message) => {
       maxOutputTokens: 300,
       tools: contextualTools,
       messages: payload,
-      toolChoice: "required"
+      toolChoice: "required",
     });
 
     console.log("AI response generated", {
       userId: message.author.id,
       responseLength: text?.length || 0,
       toolCallsCount: toolResults?.length || 0,
-      stepsCount: steps?.length || 0
+      stepsCount: steps?.length || 0,
     });
   } catch (error) {
     console.error("Error processing message", { error });
-    await message.reply("Hey! I'm having a bit of trouble processing that right now 😅");
+    await message.reply(
+      "Hey! I'm having a bit of trouble processing that right now 😅",
+    );
   }
 });

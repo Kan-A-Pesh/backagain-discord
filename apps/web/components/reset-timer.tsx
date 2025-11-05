@@ -22,9 +22,7 @@ export function ResetTimer({ className }: ResetTimerProps) {
 
     // Total milliseconds until next reset
     const msUntilReset =
-      minutesUntilReset * 60 * 1000 -
-      seconds * 1000 -
-      milliseconds;
+      minutesUntilReset * 60 * 1000 - seconds * 1000 - milliseconds;
 
     return msUntilReset;
   };
@@ -73,7 +71,7 @@ export function ResetTimer({ className }: ResetTimerProps) {
     <div
       className={cn(
         "inline-flex items-center gap-3 rounded-md border bg-background px-4 py-2.5 shadow-xs transition-all dark:border-input dark:bg-input/30",
-        className
+        className,
       )}
     >
       <div className="flex flex-col gap-0.5">
