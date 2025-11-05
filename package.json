@@ -1,0 +1,30 @@
+{
+  "name": "turbo-template",
+  "private": true,
+  "scripts": {
+    "build": "turbo run build",
+    "dev": "turbo run dev",
+    "lint": "turbo run lint",
+    "format": "prettier --write \"**/*.{ts,tsx,md,css}\"",
+    "types:check": "turbo run types:check",
+    "checks": "prettier --check \"**/*.{ts,tsx,md,css}\" && turbo run types:check lint",
+    "db:check": "turbo run db:check",
+    "db:migrate": "turbo run db:migrate",
+    "db:studio": "turbo run db:studio",
+    "db:generate": "turbo run db:generate",
+    "db:push": "turbo run db:push",
+    "db:start": "docker compose up -d",
+    "db:stop": "docker compose down -v",
+    "auth:generate": "turbo run auth:generate",
+    "ui:add": "turbo run ui:add"
+  },
+  "devDependencies": {
+    "prettier": "^3.6.2",
+    "turbo": "^2.6.0",
+    "typescript": "5.9.2"
+  },
+  "packageManager": "pnpm@9.0.0",
+  "engines": {
+    "node": ">=18"
+  }
+}
